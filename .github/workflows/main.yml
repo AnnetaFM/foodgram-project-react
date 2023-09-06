@@ -147,8 +147,8 @@ jobs:
             sudo docker compose rm backend
             sudo docker-compose rm frontend
             
-            sudo docker pull nemosanima/foodgram_frontend:latest
-            sudo docker pull nemosanima/foodgram_backend:latest
+            sudo docker pull anettafm/foodgram_frontend:latest
+            sudo docker pull anettafm/foodgram_backend:latest
             sudo docker-compose up -d
             sudo docker system prune -af
 

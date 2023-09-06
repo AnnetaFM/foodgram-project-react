@@ -1,29 +1,25 @@
 from django.db.models import Sum
 from django.http import HttpResponse
-from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import get_object_or_404
-
-from rest_framework import viewsets, status
+from django_filters.rest_framework import DjangoFilterBackend
+from djoser.views import UserViewSet
+from recipes.models import (FavoriteRecipe, Ingredient, Recipe,
+                            RecipeIngredient, ShoppingList, Tag)
+from rest_framework import status, viewsets
 from rest_framework.decorators import action
-from rest_framework.response import Response
 from rest_framework.permissions import (IsAuthenticated,
                                         IsAuthenticatedOrReadOnly)
-from djoser.views import UserViewSet
+from rest_framework.response import Response
+from users.models import Subscription, User
 
-from recipes.models import (Ingredient, Tag, Recipe,
-                            RecipeIngredient, FavoriteRecipe, ShoppingList)
-from users.models import User, Subscription
-
+from .filters import IngredientFilter, RecipeFilter
 from .pagination import CustomPagination
 from .permissions import IsOwnerOrReadOnly
-from .filters import RecipeFilter, IngredientFilter
-from .serializers import (
-    UserSerializer, SubscriptionSerializer, IngredientSerializer,
-    TagSerializer, RecipeSerializer, RecipeCreateSerializer,
-    ChangePasswordSerializer, FavoriteRecipeSerializer, ShoppingListSerializer)
-
-
-NAME_OF_FILE = 'shopping_cart.txt'
+from .serializers import (ChangePasswordSerializer, FavoriteRecipeSerializer,
+                          IngredientSerializer, RecipeCreateSerializer,
+                          RecipeSerializer, ShoppingListSerializer,
+                          SubscriptionSerializer, TagSerializer,
+                          UserSerializer)
 
 
 class UserViewSet(UserViewSet):
@@ -125,6 +121,19 @@ class RecipeViewSet(viewsets.ModelViewSet):
         ).annotate(amount=Sum('amount'))
         return self.send_message(ingredients)
 
+    @staticmethod
+    def send_message(ingredients):
+        shopping_list = 'Список покупок:'
+        for ingredient in ingredients:
+            shopping_list += (
+                f"\n{ingredient['ingredient__name']} "
+                f"({ingredient['ingredient__measurement_unit']}) - "
+                f"{ingredient['amount']}")
+        file = 'shopping_list.txt'
+        response = HttpResponse(shopping_list, content_type='text/plain')
+        response['Content-Disposition'] = f'attachment; filename="{file}.txt"'
+        return response
+
     @action(
         detail=True,
         methods=('POST',),
@@ -174,16 +183,3 @@ class RecipeViewSet(viewsets.ModelViewSet):
             recipe=get_object_or_404(Recipe, id=pk)
         ).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-
-    @staticmethod
-    def send_message(ingredients):
-        shopping_list = 'Купить в магазине:'
-        for ingredient in ingredients:
-            shopping_list += (
-                f"\n{ingredient['ingredient__name']} "
-                f"({ingredient['ingredient__measurement_unit']}) - "
-                f"{ingredient['amount']}")
-        file = 'shopping_list.txt'
-        response = HttpResponse(shopping_list, content_type='text/plain')
-        response['Content-Disposition'] = f'attachment; filename="{file}.txt"'
-        return response

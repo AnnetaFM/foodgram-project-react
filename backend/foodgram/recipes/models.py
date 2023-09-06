@@ -1,5 +1,4 @@
 from django.db import models
-
 from users.models import User
 
 
@@ -94,10 +93,12 @@ class RecipeIngredient(models.Model):
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
+        related_name='ingredient_list'
     )
     ingredient = models.ForeignKey(
         Ingredient,
         on_delete=models.CASCADE,
+        related_name='ingredient_list'
     )
     amount = models.DecimalField(
         verbose_name="Количество",

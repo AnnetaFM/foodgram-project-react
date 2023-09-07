@@ -2,11 +2,11 @@ import os
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-SECRET_KEY = 'g_bncgppr=l-lb264u(=1mxo_@64$jo3eb-ys8mkok2c=jk)&t'
+SECRET_KEY = os.getenv('SECRET_KEY', 'default_secret_key')
 
-DEBUG = True
+DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = ['158.160.64.254', '127.0.0.1', 'localhost', 'foodgrammy.servebeer.com']
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '127.0.0.1,localhost').split(',')
 
 INSTALLED_APPS = [
     'django.contrib.admin',

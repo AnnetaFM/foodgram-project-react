@@ -134,6 +134,13 @@ class RecipeIngredientSerializer(serializers.ModelSerializer):
 
 class RecipeIngredientCreateSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField()
+    amount = serializers.IntegerField()
+
+    def validate_amount(self, value):
+        if not isinstance(value, int) or value < 0:
+            raise serializers.ValidationError(
+                'Количество должно быть целым положительным числом!')
+        return value
 
     class Meta:
         model = RecipeIngredient
@@ -194,6 +201,12 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
             'tags': {'required': True, 'allow_blank': False},
             'cooking_time': {'required': True},
         }
+
+    def validate_cooking_time(self, value):
+        if value < 0:
+            raise serializers.ValidationError(
+                'Время готовки должно быть больше или равно 0.')
+        return value
 
     def validate(self, obj):
         required_fields = ['name', 'text', 'cooking_time']

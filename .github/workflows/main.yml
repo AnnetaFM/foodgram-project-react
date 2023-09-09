@@ -109,13 +109,14 @@ jobs:
             sudo echo DB_HOST=${{ secrets.DB_HOST }} >> .env
             sudo echo DB_PORT=${{ secrets.DB_PORT }} >> .env
             
-            sudo docker-compose stop
-            sudo docker compose rm backend
-            sudo docker-compose rm frontend
+            sudo docker compose down
             
-            sudo docker pull anettafm/foodgram_frontend:latest
-            sudo docker pull anettafm/foodgram_backend:latest
-            sudo docker-compose up -d
+            sudo docker compose pull
+            sudo docker compose up -d
+            sudo docker compose exec backend python manage.py migrate
+            sudo docker compose exec backend python manage.py collectstatic
+            sudo docker compose exec backend cp -r /app/static/. /backend_static/static/
+
             sudo docker system prune -af
 
   send_message:

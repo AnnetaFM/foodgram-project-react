@@ -31,10 +31,20 @@ class RecipeAdmin(admin.ModelAdmin):
 
     @transaction.atomic
     def save_model(self, request, obj, form, change):
-        if not obj.ingredients.exists() or obj.cooking_time <= 0:
+        if not obj.cooking_time > 0:
             raise ValidationError(
-                "Заполните обязательные поля!")
+                "Время приготовления должно быть больше 0 минут!")
         super().save_model(request, obj, form, change)
+
+    def save_related(self, request, form, formsets, change):
+        super().save_related(request, form, formsets, change)
+        if not form.instance.ingredients.exists():
+            raise ValidationError("Укажите ингредиенты!")
+
+    def clean(self):
+        super().clean()
+        if not self.cleaned_data.get('ingredients'):
+            raise ValidationError("Укажите ингредиенты!")
 
 
 admin.site.register(RecipeIngredient)

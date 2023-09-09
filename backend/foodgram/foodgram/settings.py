@@ -103,7 +103,7 @@ DJOSER = {
     },
 }
 
-LANGUAGE_CODE = 'ru-ru'
+LANGUAGE_CODE = 'Ru-ru'
 
 TIME_ZONE = 'UTC'
 

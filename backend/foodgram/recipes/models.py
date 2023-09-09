@@ -1,3 +1,4 @@
+from django.core.validators import MinValueValidator
 from django.db import models
 from users.models import User
 
@@ -79,6 +80,10 @@ class Recipe(models.Model):
     )
     cooking_time = models.PositiveIntegerField(
         verbose_name="Время приготовления (в минутах)",
+        validators=[MinValueValidator(
+            1,
+            message="Время приготовления не может быть равно 0!")
+        ]
     )
 
     pub_date = models.DateTimeField(
@@ -106,11 +111,13 @@ class RecipeIngredient(models.Model):
         on_delete=models.CASCADE,
         related_name='ingredient_list'
     )
-    amount = models.DecimalField(
+    amount = models.IntegerField(
         verbose_name="Количество",
         default=0,
-        max_digits=10,
-        decimal_places=2,
+        validators=[MinValueValidator(
+            1,
+            message="Добавьте ингредиент!")
+        ]
     )
 
     class Meta:

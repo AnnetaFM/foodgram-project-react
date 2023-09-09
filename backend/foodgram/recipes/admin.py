@@ -1,6 +1,4 @@
 from django.contrib import admin
-from django.core.exceptions import ValidationError
-from django.db import transaction
 
 from .models import (FavoriteRecipe, Ingredient, Recipe, RecipeIngredient,
                      ShoppingList, Tag)
@@ -8,7 +6,7 @@ from .models import (FavoriteRecipe, Ingredient, Recipe, RecipeIngredient,
 
 class RecipeIngredientInline(admin.TabularInline):
     model = RecipeIngredient
-    extra = 1
+    min_num = 1
 
 
 @admin.register(Ingredient)
@@ -28,23 +26,6 @@ class RecipeAdmin(admin.ModelAdmin):
         return obj.favorited_by.count()
 
     favorited_by_count.short_description = "Кол-во в избранном"
-
-    @transaction.atomic
-    def save_model(self, request, obj, form, change):
-        if not obj.cooking_time > 0:
-            raise ValidationError(
-                "Время приготовления должно быть больше 0 минут!")
-        super().save_model(request, obj, form, change)
-
-    def save_related(self, request, form, formsets, change):
-        super().save_related(request, form, formsets, change)
-        if not form.instance.ingredients.exists():
-            raise ValidationError("Укажите ингредиенты!")
-
-    def clean(self):
-        super().clean()
-        if not self.cleaned_data.get('ingredients'):
-            raise ValidationError("Укажите ингредиенты!")
 
 
 admin.site.register(RecipeIngredient)

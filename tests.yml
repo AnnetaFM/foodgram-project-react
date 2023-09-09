@@ -1,4 +1,4 @@
-repo_owner: AnnetaFM 
+rep_owner: AnnetaFM 
 
 foodgram_domain: https://foodgrammy.servebeer.com
 
@@ -6,4 +6,4 @@ superuser:
   - name: anna
   - password: anna7777
 
-dockerhub_username: anettafm 
+dockerhub_username: anettafm

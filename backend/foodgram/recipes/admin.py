@@ -1,4 +1,6 @@
 from django.contrib import admin
+from django.core.exceptions import ValidationError
+from django.db import transaction
 
 from .models import (FavoriteRecipe, Ingredient, Recipe, RecipeIngredient,
                      ShoppingList, Tag)
@@ -26,6 +28,13 @@ class RecipeAdmin(admin.ModelAdmin):
         return obj.favorited_by.count()
 
     favorited_by_count.short_description = "Кол-во в избранном"
+
+    @transaction.atomic
+    def save_model(self, request, obj, form, change):
+        if not obj.ingredients.exists() or obj.cooking_time <= 0:
+            raise ValidationError(
+                "Заполните обязательные поля!")
+        super().save_model(request, obj, form, change)
 
 
 admin.site.register(RecipeIngredient)

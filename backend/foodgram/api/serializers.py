@@ -6,8 +6,14 @@ from rest_framework import exceptions, serializers
 from rest_framework.exceptions import ValidationError
 
 from users.models import Subscription, User
-from recipes.models import (FavoriteRecipe, Ingredient, Recipe,
-                            RecipeIngredient, ShoppingList, Tag,)
+from recipes.models import (
+    FavoriteRecipe,
+    Ingredient,
+    Recipe,
+    RecipeIngredient,
+    ShoppingList,
+    Tag,
+)
 
 
 class UserSerializer(djoser.serializers.UserSerializer):

@@ -11,6 +11,7 @@ services:
     env_file: .env
     volumes:
       - pg_data:/var/lib/postgresql/data
+
   backend:
     image: anettafm/foodgram_backend:latest
     env_file: .env
@@ -19,6 +20,7 @@ services:
       - media:/media/
     depends_on:
       - db
+
   frontend:
     env_file: .env
     image: anettafm/foodgram_frontend:latest
@@ -27,6 +29,7 @@ services:
       - static:/frontend_static
     depends_on:
       - backend
+
   nginx:
     image: anettafm/foodgram_infra:latest
     env_file: .env

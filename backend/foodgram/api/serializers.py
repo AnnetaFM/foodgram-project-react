@@ -2,11 +2,12 @@ import djoser.serializers
 from django.contrib.auth import password_validation
 from django.db import transaction
 from drf_base64.fields import Base64ImageField
-from recipes.models import (FavoriteRecipe, Ingredient, Recipe,
-                            RecipeIngredient, ShoppingList, Tag)
 from rest_framework import exceptions, serializers
 from rest_framework.exceptions import ValidationError
+
 from users.models import Subscription, User
+from recipes.models import (FavoriteRecipe, Ingredient, Recipe,
+                            RecipeIngredient, ShoppingList, Tag,)
 
 
 class UserSerializer(djoser.serializers.UserSerializer):

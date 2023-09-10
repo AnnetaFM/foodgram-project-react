@@ -11,8 +11,7 @@ class Command(BaseCommand):
         csv_file = 'recipes/data/ingredients.csv'
         with open(csv_file, encoding='utf-8') as file:
             file_reader = csv.reader(file)
-            for row in file_reader:
-                name, measurement_unit = row
+            for name, measurement_unit in file_reader:
                 Ingredient.objects.get_or_create(
                     name=name,
                     measurement_unit=measurement_unit

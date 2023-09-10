@@ -2,30 +2,32 @@ from django.core.validators import MinValueValidator
 from django.db import models
 from users.models import User
 
+MAX_LEN = 200
+
 
 class Ingredient(models.Model):
     name = models.CharField(
-        max_length=200,
+        max_length=MAX_LEN,
         verbose_name="Название ингредиента",
         help_text="Введите название ингредиента",
     )
     measurement_unit = models.CharField(
-        max_length=200,
+        max_length=MAX_LEN,
         verbose_name="Единица измерения",
         help_text="Введите единицу измерения",
     )
-
-    def __str__(self):
-        return self.name
 
     class Meta:
         verbose_name = "Ингредиент"
         verbose_name_plural = "Ингредиенты"
 
+    def __str__(self):
+        return self.name
+
 
 class Tag(models.Model):
     name = models.CharField(
-        max_length=200,
+        max_length=MAX_LEN,
         verbose_name="Тег",
         help_text="Тег рецепта",
         unique=True,
@@ -36,18 +38,18 @@ class Tag(models.Model):
         help_text="Цвет тега в формате HEX (например, #49B64E)",
     )
     slug = models.SlugField(
-        max_length=200,
+        max_length=MAX_LEN,
         unique=True,
         verbose_name="Slug",
         help_text="Уникальное имя для использования в URL",
     )
 
-    def __str__(self):
-        return self.name
-
     class Meta:
         verbose_name = "Тег"
         verbose_name_plural = "Теги"
+
+    def __str__(self):
+        return self.name
 
 
 class Recipe(models.Model):
@@ -58,7 +60,7 @@ class Recipe(models.Model):
         verbose_name="Автор",
     )
     name = models.CharField(
-        max_length=200,
+        max_length=MAX_LEN,
         verbose_name="Название рецепта",
     )
     image = models.ImageField(
@@ -85,19 +87,18 @@ class Recipe(models.Model):
             message="Время приготовления не может быть равно 0!")
         ]
     )
-
     pub_date = models.DateTimeField(
         'Дата публикации',
         auto_now_add=True
     )
 
-    def __str__(self):
-        return self.name
-
     class Meta:
         ordering = ['-pub_date']
         verbose_name = "Рецепт"
         verbose_name_plural = "Рецепты"
+
+    def __str__(self):
+        return self.name
 
 
 class RecipeIngredient(models.Model):
@@ -142,12 +143,18 @@ class FavoriteRecipe(models.Model):
         verbose_name="Избранный рецепт",
     )
 
-    def __str__(self):
-        return f"{self.user} -> {self.recipe}"
-
     class Meta:
         verbose_name = "Избранный рецепт"
         verbose_name_plural = "Избранные рецепты"
+        constraints = (
+            models.UniqueConstraint(
+                fields=('user', 'recipe',),
+                name='unique_user_recipe',
+            ),
+        )
+
+    def __str__(self):
+        return f"{self.user} -> {self.recipe}"
 
 
 class ShoppingList(models.Model):
@@ -164,9 +171,6 @@ class ShoppingList(models.Model):
         related_name='recipe_shopping_lists',
     )
 
-    def __str__(self):
-        return f"Список покупок для {self.user}"
-
     class Meta:
         verbose_name = "Список покупок"
         verbose_name_plural = "Списки покупок"
@@ -175,3 +179,6 @@ class ShoppingList(models.Model):
                 fields=['recipe', 'user'], name='unique_shopping_list_recipe'
             )
         ]
+
+    def __str__(self):
+        return f"Список покупок для {self.user}"

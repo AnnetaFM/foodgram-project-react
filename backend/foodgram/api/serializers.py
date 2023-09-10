@@ -135,7 +135,6 @@ class RecipeIngredientSerializer(serializers.ModelSerializer):
 
 class RecipeIngredientCreateSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField()
-    amount = serializers.IntegerField()
 
     def validate_amount(self, value):
         if not isinstance(value, int) or value < 0:
